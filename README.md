@@ -69,11 +69,12 @@ Event Streaming Applications and stream management using Kafka, Kafka Connect (S
 
 # Quick start with required connectors. Modify the Dockerfile-confluenthub to add more connectors.
 
-For building the modified image using Dockerfile-confluenthub
-    1. docker build . -t cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0 -f Dockerfile-confluenthub
-    2. docker-compose up -d
-    3. docker-compose ps
-    4. Navigate to the Control Center web interface at http://localhost:9021.
+For building the modified image using Dockerfile-confluenthub:
+
+    - docker build . -t cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0 -f Dockerfile-confluenthub
+    - docker-compose up -d
+    - docker-compose ps
+    - Navigate to the Control Center web interface at http://localhost:9021.
 
 ## Sample 1: Debezium Connector (Source Connector to get CDC based changes)
 
