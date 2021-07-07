@@ -1,81 +1,43 @@
-# Event Streaming 
-Event Streaming Applications and stream management using Kafka, Kafka Connect (Sinks and Source), Zookeeper, Landoop, Confluent-Hub etc.
+# Event Streaming (Confluent & Landoop)
+Event Streaming Applications and stream management using Kafka, Kafka Connect (Sinks and Source), Zookeeper, Landoop, Confluent-Hub etc. The focus of the implementation is to get things working and future updates to get it improved further. 
 
-# oreilly-samples (landoop)
-## Tutorial contains the complete code step by step. Checkout the code samples below.
-.*
-├── _tutorial
-│   └── code
-│       ├── docker-compose.yml
-│       ├── kafka-connect-tutorial-sinks.sh
-│       ├── kafka-connect-tutorial-sources.sh
-│       ├── setup
-│       │   ├── connect-distributed-2nd-worker.properties
-│       │   ├── connect-distributed.properties
-│       │   └── setup.sh
-│       ├── sink
-│       │   ├── demo-elasticsearch
-│       │   │   ├── query-high-friends.json
-│       │   │   ├── query-only-retweets.json
-│       │   │   └── sink-elastic-twitter-distributed.properties
-│       │   ├── demo-postgres
-│       │   │   └── sink-postgres-twitter-distributed.properties
-│       │   ├── demo-postgres-smt
-│       │   └── demo-rest-api
-│       │       └── demo-rest-api.sh
-│       └── source
-│           ├── demo-1
-│           │   ├── demo-file.txt
-│           │   ├── file-stream-demo-standalone.properties
-│           │   ├── standalone.offsets
-│           │   └── worker.properties
-│           ├── demo-2
-│           │   └── file-stream-demo-distributed.properties
-│           └── demo-3
-│               └── source-twitter-distributed.properties
+# Kafka Cluster - Landoop Platform
+### Tutorial contains the complete code step by step using the landoop image. Checkout the code samples below.
+    Twitter developer account is required for twitter source integration. Apply here: https://developer.twitter.com/en/apply-for-access
+    Main keys required are below. Give proper justification as to why you need developer access else justification will be asked again in emails.
+     
+    - "twitter.consumerkey": "<<available once you get access>>"
+    - "twitter.consumersecret": "<<available once you get access>>"
+    - "twitter.token": "<<available once you register your app>>"
+    - "twitter.secret": "<<available once you register your app>>"
 
 
+## Sample 1: Twitter Integration (Twitter Feeds --> Elasticsearch + Dejavu, Postgress, Sql Server)
+<hr>
 
-## Sample Twitter Integration
-.*
-
-└── twitter-kafka-elastic-postgres
-    ├── docker-compose.yml
-    ├── source-twitter-distributed.properties
-    └── twitter-kafka-elastic-postgres.sh
+<p>The Sample twitter integration is done using landoop/fast-data-dev:cp3.3.0 and has old confluent implementation. The sample here connects twitter tweets with elastic search, postgres and sql server. NOTE: With Sql Server the auto-create feature doesn't work and the table has to be created up front.</p>
 
 ### 1. Docker compose and connector properties.
 <p>This folder contain a simple shell script (twitter-kafka-elastic-postgres.sh) to run all the required steps.</p>
 
-    $ docker-compose up kafka-cluster elasticsearch postgres
-    $ docker run --rm -it --net=host landoop/fast-data-dev bash
-    $ kafka-topics --create --topic source_twitter_topic_tweets_ajay1 --partitions 3 --replication-factor 1 --zookeeper 127.0.0.1:2181
+    $ Run Commands available in twitter-kafka-elastic-postgres.sh. Run them one by one.
+
+    For SQL Server Kafka Connect implementation, table creation would be required before hand for SQL Server Connector to work properly. 
     
-    - Testing: Start a console consumer on that topic
-    $ kafka-console-consumer --topic source_twitter_topic_tweets_ajay1 --bootstrap-server 127.0.0.1:9092
+    Read the issue here : https://docs.confluent.io/kafka-connect-jdbc/current/sink-connector/sink_config_options.html.
 
 
-### 2. docker ps
+### 2. docker ps - displays below info
 | IMAGE  | PORTS | DESCRIPTION |
 | ------------- | ------------- | ------------- |
-| landoop/fast-data-dev:latest  |  0.0.0.0:2181->2181/tcp, 0.0.0.0:3030->3030/tcp, 0.0.0.0:8081-8083->8081-8083/tcp, 0.0.0.0:9092->9092/tcp, 0.0.0.0:9581-9585->9581-9585/tcp, 3031/tcp  | Source Topic Name: source_twitter_topic_tweets_ajay1, Sink Topic Name: source_twitter_topic_tweets_ajay1
+| landoop/fast-data-dev:cp3.3.0 |  0.0.0.0:2181->2181/tcp, 0.0.0.0:3030->3030/tcp, 0.0.0.0:8081-8083->8081-8083/tcp, 0.0.0.0:9092->9092/tcp, 0.0.0.0:9581-9585->9581-9585/tcp, 3031/tcp  | http://localhost:3030/ - landoop, http://localhost:8083/connectors
 | itzg/elasticsearch:2.4.3  | 0.0.0.0:9200->9200/tcp, 9300/tcp  | http://0.0.0.0:9200/ - elasticsearch health check|
 | postgres:9.5-alpine  | 0.0.0.0:5432->5432/tcp  |
 
+### Links and Refrences:
+    1. https://docs.confluent.io/kafka-connect-jdbc/current/source-connector/source_config_options.html
+    2. https://docs.confluent.io/kafka-connect-jdbc/current/sink-connector/sink_config_options.html
+    3. https://github.com/Eneco/kafka-connect-twitter
+    4. https://developer.twitter.com/en/support/twitter-api/error-troubleshooting
 
-
-
-# confluent-samples
-
-# Quick start with required connectors. Modify the Dockerfile-confluenthub to add more connectors.
-
-For building the modified image using Dockerfile-confluenthub:
-
-    - docker build . -t cnfldemos/cp-server-connect-datagen:0.5.0-6.2.0 -f Dockerfile-confluenthub
-    - docker-compose up -d
-    - docker-compose ps
-    - Navigate to the Control Center web interface at http://localhost:9021.
-
-## Sample 1: Debezium Connector (Source Connector to get CDC based changes)
-
-
+# confluent-samples (latest)
