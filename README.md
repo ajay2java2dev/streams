@@ -43,7 +43,31 @@ Event Streaming Applications and stream management using Kafka, Kafka Connect (S
     5. https://developer.twitter.com/en/apply-for-access
     6. https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-ubuntu?view=sql-server-ver15
     
-
 # confluent-samples (latest)
 
-<p>Checkout the confluent folder for the same. Included a docker custom image such that SQL Server Connector can be added.</p>
+<p>Upto this point we have a Kafka Cluster up and running with SQL Server also working and capturing Tweets from Twitter. Next checkout the confluent folder for the latest confluent way of doing things. I have included a docker custom (available in confluent) image such that SQL Server Connector can be added through confluent-hub command this time. I am running this stack on seperate machine now as to not disturb the above setup but you can very well migrate the whole thing to confluent based implementation and leave your SQL Server running in your previous machine.</p>
+
+## Sample 1: Debezium based SQL Server Connector
+<hr/>
+
+### Task 1: CDC - Changes for Enabling Change-Data-Capture (CDC)
+<hr/>
+
+
+<p> On SQL server you created above you enable CDC and that then can be used for generating changed events to you Kafka topic. Kafka can read the whole table (bulk) or you provide and incremental column mechanism to identify delta changes. Since many times tables are owned by different teams, it rather becomes difficult to convince other teams to add a new column or have a ETL process configured to copy (messy) data from source to new table. So instead CDC (if you can get convice DBA's to enable it) can be used to capture changed events for your Kafka events to get generated correctly.</p>
+
+    - For CDC to work, first you need to ensure Sql Server Agent is up and running. If not follow this link: https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-setup-sql-agent?view=sql-server-ver15. Most likely
+
+    - sql-server-ct.sql: contains few commands to get the CDC started and enabled on a specific table. Once the Change Transaction table (CT) table is created under Systems, notice the records getting generated and the __$opteration column value. Deleting the records from source table would mark the value in this column as 1.
+    
+    __$operation status: (should be useful later on with kafka event updates)
+        1 = DELETE
+        2 = INSERT
+        4 = UPDATE
+
+    - Note you have also got additional functions under Programmability --> Functions --> Table-Valued Functions if CDC is enabled correctly. These can help in capturing changed records.
+
+<p>PS: Probably after this you might say changing the table itself was simple enough but sometimes and on a larger scale thats not always a possibility. Also few good features are offered here by CDC as well as database level itself. So why not leverage those rather than have your developer write additional scripts. </p>
+
+### Task 2: Kafka Connect
+<hr>
