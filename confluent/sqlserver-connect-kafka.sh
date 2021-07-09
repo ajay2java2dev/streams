@@ -5,10 +5,7 @@ docker-compose exec broker kafka-topics --bootstrap-server broker:9092 --topic S
 docker-compose exec broker kafka-topics --bootstrap-server broker:9092 --topic SOURCE_CMPGN_MNGR_BRANDING_EVENTS --create --replication-factor 1 --partitions 1 --config cleanup.policy=compact
  
  ## Or Alter default config, add compact policy
-docker-compose exec broker kafka-configs --bootstrap-server broker:9092 --entity-type topics --entity-name SOURCE_CMPGN_MNGR_BRANDING_EVENTS --alter --add-config "cleanup.policy=[delete,compact]"
-
-# Connect to docker container running our kafka cluster and kafka connect.
-sudo docker run --rm -it --net=host landoop/fast-data-dev:cp3.3.0 bash
+docker-compose exec broker kafka-configs --bootstrap-server broker:9092 --entity-type topics --entity-name SOURCE_CMPGN_MNGR_BRANDING_EVENTS --alter --add-config "cleanup.policy=[delete,compact], retention.ms=1800000, retention.bytes=1073741824"
 
 # Create a connector through rest call here or directly through postman.
 curl -X POST \
